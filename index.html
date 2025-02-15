@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script>
+            window.onload = function() {
+                async function getResponse(url) {
+                    console.debug('getResponse', url)
+
+                    const response = await fetch(`${url}?id=BEHOLD_FEED_ID`, {
+                        method: 'GET'
+                    })
+
+                    if (response.ok) {
+                        const data = await response.json()
+                        document.getElementById('response').value = JSON.stringify(data)
+                    }
+                    else {
+                        console.debug('fetch failed', response)
+                    }
+                }
+
+                document.getElementById('getResponseGo').addEventListener('click', async function(event) {
+                    event.preventDefault();
+                    await getResponse('cgi-bin/bhproxy')
+                })
+
+                console.debug('onload executed')
+            }
+        </script>
+    </head>
+    <body>
+        <button id="getResponseGo">Get response (Go)</button>
+        <textarea id="response" rows="20" cols="40"></textarea>
+    </body>    
+</html>
