@@ -5,8 +5,6 @@ import (
 	"net/http"
 	"net/http/cgi"
 
-	_ "github.com/mattn/go-sqlite3"
-
 	"github.com/lattots/instagramproxy/pkg/handler"
 )
 

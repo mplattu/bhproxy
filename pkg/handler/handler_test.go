@@ -7,8 +7,6 @@ import (
 	"os"
 	"testing"
 
-	_ "github.com/mattn/go-sqlite3"
-
 	"github.com/lattots/instagramproxy/pkg/db"
 	"github.com/lattots/instagramproxy/pkg/feed"
 )
