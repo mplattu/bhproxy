@@ -3,8 +3,6 @@ package db
 import (
 	"os"
 	"testing"
-
-	_ "github.com/mattn/go-sqlite3"
 )
 
 func TestOpenSqliteDB(t *testing.T) {
