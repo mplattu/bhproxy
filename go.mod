@@ -1,8 +1,6 @@
 module github.com/lattots/bhproxy
 
-go 1.23.0
-
-toolchain go1.23.4
+go 1.23.4
 
 require modernc.org/sqlite v1.35.0
 
