@@ -1,4 +1,4 @@
-module github.com/lattots/instagramproxy
+module github.com/lattots/bhproxy
 
 go 1.23.0
 

@@ -7,8 +7,8 @@ import (
 	"os"
 	"testing"
 
-	"github.com/lattots/instagramproxy/pkg/db"
-	"github.com/lattots/instagramproxy/pkg/feed"
+	"github.com/lattots/bhproxy/pkg/db"
+	"github.com/lattots/bhproxy/pkg/feed"
 )
 
 func TestNewSqliteHandler(t *testing.T) {
@@ -24,16 +24,16 @@ func TestNewSqliteHandler(t *testing.T) {
 }
 
 func TestSqliteHandler(t *testing.T) {
-	testDBfilepath := "data/test/test.sqlite"
-
-	err := populateTestDB(testDBfilepath)
-	if err != nil {
-		t.Fatalf("populateTestDB returned an error: %s", err)
-	}
+	testDBfilepath := "data/db.sqlite"
 
 	handler, err := NewSqliteHandler(testDBfilepath)
 	if err != nil {
 		t.Errorf("NewSqliteHandler returned an error: %s", err)
+	}
+
+	err = populateTestDB(testDBfilepath)
+	if err != nil {
+		t.Fatalf("populateTestDB returned an error: %s", err)
 	}
 
 	http.HandleFunc("GET /", handler.HandleGetFeed)

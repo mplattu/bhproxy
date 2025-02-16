@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"net/http/cgi"
 
-	"github.com/lattots/instagramproxy/pkg/handler"
+	"github.com/lattots/bhproxy/pkg/handler"
 )
 
 const databaseFilename = "data/db.sqlite"
