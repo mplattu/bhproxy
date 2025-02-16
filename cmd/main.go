@@ -7,7 +7,7 @@ import (
 
 	_ "github.com/mattn/go-sqlite3"
 
-	"github.com/lattots/instagramproxy/pkg/handler"
+	"github.com/lattots/bhproxy/pkg/handler"
 )
 
 const databaseFilename = "data/db.sqlite"

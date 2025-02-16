@@ -8,8 +8,8 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/lattots/instagramproxy/pkg/db"
-	"github.com/lattots/instagramproxy/pkg/feed"
+	"github.com/lattots/bhproxy/pkg/db"
+	"github.com/lattots/bhproxy/pkg/feed"
 )
 
 type Handler interface {
@@ -24,6 +24,7 @@ func (h *sqliteHandler) HandleGetFeed(w http.ResponseWriter, r *http.Request) {
 	id := r.URL.Query().Get("id")
 	if id == "" {
 		w.WriteHeader(http.StatusBadRequest)
+		return
 	}
 
 	log.Printf("HandleGetFeed for %s", id)
