@@ -1,5 +1,16 @@
+TEMP_DIR := $(TMPDIR)
+ifeq ($(TEMP_DIR),)
+    TEMP_DIR := $(TEMP)
+endif
+ifeq ($(TEMP_DIR),)
+    TEMP_DIR := /tmp
+endif
+
+DB_FILENAME=$(TEMP_DIR)/bhproxy.sqlite
+
 start:
-	python3 -m http.server --bind localhost --cgi 8080
+	if [ ! -f $(DB_FILENAME) ]; then touch $(DB_FILENAME); fi
+	DB_FILENAME=$(DB_FILENAME) python3 -m http.server --bind localhost --cgi 8080
 
 start-minihttpd:
 	if [ -f /tmp/mini_httpd.log ]; then rm /tmp/mini_httpd.log; fi
@@ -17,10 +28,12 @@ build-dev:
 
 test:
 	@go test ./pkg/feed
+	@go test ./pkg/utility
 	@go test ./pkg/db
 	@go test ./pkg/handler
 
 test-v:
 	@go test -v ./pkg/feed
+	@go test -v ./pkg/utility
 	@go test -v ./pkg/db
 	@go test -v ./pkg/handler
