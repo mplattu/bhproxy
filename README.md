@@ -10,9 +10,9 @@ The bhproxy lives behind a web service via CGI which makes possible to run it in
 
 bhproxy reads following environment variables:
 
-* `DB_FILENAME` - a path to rw file used to store SQLite database. Required.
-* `IMAGE_DIRECTORY` - a rw path to store all images a without trailing slash. Required.
-* `IMAGE_URL` - prefix for image files located in `IMAGE_DIRECTORY` without a trailing slash. Optional, defaults to root (`/`).
+* `BHP_DB_FILENAME` - a path to rw file used to store SQLite database. Required.
+* `BHP_IMAGE_DIRECTORY` - a rw path to store all images a without trailing slash. Required.
+* `BHP_IMAGE_URL` - prefix for image files located in `IMAGE_DIRECTORY` without a trailing slash. Optional, defaults to root (`/`).
 
 ## Developing
 
