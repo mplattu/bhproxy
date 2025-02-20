@@ -9,6 +9,8 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"slices"
+	"strings"
 	"time"
 )
 
@@ -41,6 +43,10 @@ type Post struct {
 }
 
 func GetFeedWithID(db *sql.DB, id string) (*Feed, error) {
+	if !isAllowedFeedId(id) {
+		return nil, fmt.Errorf("given feed id %s is not in the whitelist", id)
+	}
+
 	feed := &Feed{ID: id}
 
 	err := feed.fetchOrCreateFeed(db)
@@ -57,6 +63,19 @@ func GetFeedWithID(db *sql.DB, id string) (*Feed, error) {
 	go feed.removeDeprecatedPosts(db)
 
 	return feed, nil
+}
+
+func isAllowedFeedId(feedID string) bool {
+	allowedFeedIdsStr := os.Getenv("BHP_ALLOWED_FEED_IDS")
+	allowedFeedIdsStrWithoutSpaces := strings.ReplaceAll(allowedFeedIdsStr, " ", "")
+
+	if allowedFeedIdsStrWithoutSpaces == "" {
+		return true
+	}
+
+	allowedFeedIds := strings.Split(allowedFeedIdsStrWithoutSpaces, ",")
+
+	return slices.Contains(allowedFeedIds, feedID)
 }
 
 func (f *Feed) fetchOrCreateFeed(db *sql.DB) error {
