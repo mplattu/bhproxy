@@ -11,6 +11,7 @@ The bhproxy lives behind a web service via CGI which makes possible to run it in
 bhproxy reads following environment variables:
 
 * `DB_FILENAME` - a path to rw file used to store SQLite database.
+* `IMAGE_DIRECTORY` - a rw path to store all images
 
 ## Developing
 

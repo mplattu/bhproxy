@@ -167,15 +167,28 @@ func (f *Feed) insertToDB(db *sql.DB) error {
 	return nil
 }
 
+func getImageDirectory() (string, error) {
+	imageDirectory := os.Getenv("IMAGE_DIRECTORY")
+	if imageDirectory == "" {
+		return "", errors.New("required environment variable image_directory is not set or is empty")
+	}
+
+	return imageDirectory, nil
+}
+
 const (
-	imgDirPath = "data/img/"             // imgDirPath is filepath prefix for image directory
-	urlPrefix  = "https://media.foo.com" // urlPrefix is prefix for root url path. It can be used to access other resources like images
+	urlPrefix = "https://media.foo.com" // urlPrefix is prefix for root url path. It can be used to access other resources like images
 )
 
 func ensurePostImagesExist(db *sql.DB, postIDs []string) ([]string, error) {
 	internalURLs := make([]string, len(postIDs))
+	imageDirectory, err := getImageDirectory()
+	if err != nil {
+		return nil, fmt.Errorf("failed to check image file: %w", err)
+	}
+
 	for i, postID := range postIDs {
-		filePath := filepath.Join(imgDirPath, postID+".webp")
+		filePath := filepath.Join(imageDirectory, postID+".webp")
 		internalURLs[i] = fmt.Sprintf("%s/%s", urlPrefix, filePath)
 
 		// If the image exists, skip download
@@ -218,7 +231,7 @@ func getImageExternalURL(db *sql.DB, postID string) (string, error) {
 }
 
 // downloadImage downloads the image from external source and saves it to image directory with filename:
-// ./imgDirPath/IMAGE_ID.webp
+// image-directory/IMAGE_ID.webp
 func downloadImage(filePath, url string) error {
 	file, err := os.Create(filePath)
 	if err != nil {
