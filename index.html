@@ -3,25 +3,28 @@
     <head>
         <script>
             window.onload = function() {
-                async function getResponse(url) {
-                    console.debug('getResponse', url)
+                async function getResponse(proxyUrl, beholdFeedID) {
+                    console.debug('getResponse', proxyUrl, beholdFeedID)
 
-                    const response = await fetch(`${url}?id=BEHOLD_FEED_ID`, {
+                    const response = await fetch(`${proxyUrl}?id=${beholdFeedID}`, {
                         method: 'GET'
                     })
 
                     if (response.ok) {
                         const data = await response.json()
                         document.getElementById('response').value = JSON.stringify(data)
+                        document.getElementById('latestError').textContent = ''
                     }
                     else {
                         console.debug('fetch failed', response)
+                        document.getElementById('latestError').textContent = `#${response.status}: ${response.statusText}`
                     }
                 }
 
                 document.getElementById('getResponseGo').addEventListener('click', async function(event) {
-                    event.preventDefault();
-                    await getResponse('cgi-bin/bhproxy')
+                    event.preventDefault()
+                    const beholdFeedID = document.getElementById('beholdFeedID').value
+                    await getResponse('/cgi-bin/bhproxy', beholdFeedID)
                 })
 
                 console.debug('onload executed')
@@ -29,7 +32,11 @@
         </script>
     </head>
     <body>
-        <button id="getResponseGo">Get response (Go)</button>
-        <textarea id="response" rows="20" cols="40"></textarea>
+        <p>
+            Behold Feed ID: <input type="text" id="beholdFeedID"><br/>
+            <button id="getResponseGo">Get bhproxy JSON</button>
+        </p>
+        <textarea id="response" rows="20" cols="40"></textarea><br/>
+        Latest error: <div id="latestError"></div>
     </body>    
 </html>
