@@ -6,11 +6,21 @@ import (
 	"net/http/cgi"
 	"os"
 
+	"github.com/joho/godotenv"
+
 	"github.com/lattots/bhproxy/pkg/handler"
 	"github.com/lattots/bhproxy/pkg/utility"
 )
 
 func main() {
+	dotEnvPath := utility.GetDotEnvPath()
+	if utility.FileExists(dotEnvPath) {
+		err := godotenv.Load(utility.GetDotEnvPath())
+		if err != nil {
+			log.Fatalf("could not read .env file at %s: %s", dotEnvPath, err)
+		}
+	}
+
 	databaseFilename := os.Getenv("BHP_DB_FILENAME")
 	if databaseFilename == "" {
 		log.Fatal("required environment variable db_filename is not set or is empty")
