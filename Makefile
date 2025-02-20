@@ -7,10 +7,12 @@ ifeq ($(TEMP_DIR),)
 endif
 
 DB_FILENAME=$(TEMP_DIR)/bhproxy.sqlite
+IMAGE_DIRECTORY=$(TEMP_DIR)/bhproxy-images
 
 start:
 	if [ ! -f $(DB_FILENAME) ]; then touch $(DB_FILENAME); fi
-	DB_FILENAME=$(DB_FILENAME) python3 -m http.server --bind localhost --cgi 8080
+	if [ ! -d $(IMAGE_DIRECTORY) ]; then mkdir $(IMAGE_DIRECTORY); fi
+	DB_FILENAME=$(DB_FILENAME) IMAGE_DIRECTORY=$(IMAGE_DIRECTORY) python3 -m http.server --bind localhost --cgi 8080
 
 start-minihttpd:
 	if [ -f /tmp/mini_httpd.log ]; then rm /tmp/mini_httpd.log; fi
