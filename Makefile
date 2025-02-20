@@ -8,11 +8,13 @@ endif
 
 DB_FILENAME=$(TEMP_DIR)/bhproxy.sqlite
 IMAGE_DIRECTORY=$(TEMP_DIR)/bhproxy-images
+IMAGE_URL=http://localhost:8080/images
 
 start:
 	if [ ! -f $(DB_FILENAME) ]; then touch $(DB_FILENAME); fi
 	if [ ! -d $(IMAGE_DIRECTORY) ]; then mkdir $(IMAGE_DIRECTORY); fi
-	DB_FILENAME=$(DB_FILENAME) IMAGE_DIRECTORY=$(IMAGE_DIRECTORY) python3 -m http.server --bind localhost --cgi 8080
+	if [ ! -L ./images ]; then ln -s $(IMAGE_DIRECTORY) images; fi
+	DB_FILENAME=$(DB_FILENAME) IMAGE_DIRECTORY=$(IMAGE_DIRECTORY) IMAGE_URL=$(IMAGE_URL) python3 -m http.server --bind localhost --cgi 8080
 
 start-minihttpd:
 	if [ -f /tmp/mini_httpd.log ]; then rm /tmp/mini_httpd.log; fi

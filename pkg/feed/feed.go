@@ -176,9 +176,9 @@ func getImageDirectory() (string, error) {
 	return imageDirectory, nil
 }
 
-const (
-	urlPrefix = "https://media.foo.com" // urlPrefix is prefix for root url path. It can be used to access other resources like images
-)
+func getImageURL() string {
+	return os.Getenv("IMAGE_URL")
+}
 
 func ensurePostImagesExist(db *sql.DB, postIDs []string) ([]string, error) {
 	internalURLs := make([]string, len(postIDs))
@@ -188,11 +188,12 @@ func ensurePostImagesExist(db *sql.DB, postIDs []string) ([]string, error) {
 	}
 
 	for i, postID := range postIDs {
-		filePath := filepath.Join(imageDirectory, postID+".webp")
-		internalURLs[i] = fmt.Sprintf("%s/%s", urlPrefix, filePath)
+		fileNameMediaSmall := postID + ".webp"
+		filePathMediaSmall := filepath.Join(imageDirectory, fileNameMediaSmall)
+		internalURLs[i] = fmt.Sprintf("%s/%s", getImageURL(), fileNameMediaSmall)
 
 		// If the image exists, skip download
-		if _, err := os.Stat(filePath); err == nil {
+		if _, err := os.Stat(filePathMediaSmall); err == nil {
 			continue
 		} else if !errors.Is(err, os.ErrNotExist) {
 			return nil, fmt.Errorf("failed to check image file: %w", err)
@@ -205,7 +206,7 @@ func ensurePostImagesExist(db *sql.DB, postIDs []string) ([]string, error) {
 		if err != nil {
 			return nil, fmt.Errorf("error getting images external url: %w", err)
 		}
-		err = downloadImage(filePath, dlURL)
+		err = downloadImage(filePathMediaSmall, dlURL)
 		if err != nil {
 			return nil, fmt.Errorf("error downloading image: %w", err)
 		}
@@ -331,6 +332,12 @@ func parseFeedRows(rows *sql.Rows, feed *Feed) error {
 }
 
 func (f *Feed) removeDeprecatedPosts(db *sql.DB) {
+	imageDirectory, err := getImageDirectory()
+	if err != nil {
+		log.Printf("could not remove deprecated posts: %w", err)
+		return
+	}
+
 	ids, err := f.getIrrelevantPosts(db)
 	if err != nil {
 		log.Printf("error getting post ids for feed %s: %s", f.ID, err)
@@ -348,7 +355,7 @@ func (f *Feed) removeDeprecatedPosts(db *sql.DB) {
 	}
 
 	for _, postID := range ids {
-		filePath := filepath.Join(imgDirPath, postID+".webp")
+		filePath := filepath.Join(imageDirectory, postID+".webp")
 		// check if file already doesn't exist
 		if _, err := os.Stat(filePath); err != nil {
 			continue
