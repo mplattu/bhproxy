@@ -1,8 +1,8 @@
 PWD=$(shell pwd)
 WEBROOT=$(PWD)/webroot
-DB_FILENAME=$(WEBROOT)/data/bhproxy.sqlite
-IMAGE_DIRECTORY=$(WEBROOT)/docs/images
-IMAGE_URL=http://localhost:8080/images
+BHP_DB_FILENAME=$(WEBROOT)/data/bhproxy.sqlite
+BHP_IMAGE_DIRECTORY=$(WEBROOT)/docs/images
+BHP_IMAGE_URL=http://localhost:8080/images
 
 .PHONY:ensure-webroot
 ensure-webroot:
@@ -39,7 +39,7 @@ start: ensure-webroot build-dev
 	if [ ! -f $(DB_FILENAME) ]; then touch $(DB_FILENAME); fi
 	if [ ! -f $(WEBROOT)/docs/favicon.ico ]; then touch $(WEBROOT)/docs/favicon.ico; fi
 	cp index.html $(WEBROOT)/docs/
-	DB_FILENAME=$(DB_FILENAME) IMAGE_DIRECTORY=$(IMAGE_DIRECTORY) IMAGE_URL=$(IMAGE_URL) \
+	BHP_DB_FILENAME=$(BHP_DB_FILENAME) BHP_IMAGE_DIRECTORY=$(BHP_IMAGE_DIRECTORY) BHP_IMAGE_URL=$(BHP_IMAGE_URL) \
 		python3 -m http.server --bind localhost --cgi 8080 -d $(WEBROOT)/docs
 
 .PHONY: clean

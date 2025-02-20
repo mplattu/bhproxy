@@ -11,7 +11,7 @@ import (
 )
 
 func main() {
-	databaseFilename := os.Getenv("DB_FILENAME")
+	databaseFilename := os.Getenv("BHP_DB_FILENAME")
 	if databaseFilename == "" {
 		log.Fatal("required environment variable db_filename is not set or is empty")
 	}

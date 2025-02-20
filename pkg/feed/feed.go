@@ -168,7 +168,7 @@ func (f *Feed) insertToDB(db *sql.DB) error {
 }
 
 func getImageDirectory() (string, error) {
-	imageDirectory := os.Getenv("IMAGE_DIRECTORY")
+	imageDirectory := os.Getenv("BHP_IMAGE_DIRECTORY")
 	if imageDirectory == "" {
 		return "", errors.New("required environment variable image_directory is not set or is empty")
 	}
@@ -177,7 +177,7 @@ func getImageDirectory() (string, error) {
 }
 
 func getImageURL() string {
-	return os.Getenv("IMAGE_URL")
+	return os.Getenv("BHP_IMAGE_URL")
 }
 
 func ensurePostImagesExist(db *sql.DB, postIDs []string) ([]string, error) {
