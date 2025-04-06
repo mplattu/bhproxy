@@ -15,6 +15,7 @@ bhproxy reads following environment variables:
 * `BHP_IMAGE_URL` - prefix for image files located in `IMAGE_DIRECTORY` without a trailing slash. Optional, defaults to root (`/`).
 * `BHP_ALLOWED_FEED_IDS` - comma-separated list of Behold feed IDs which this proxy serves. Optional, defaults to all IDs are allowed.
 * `BHP_LOGFILE` - path to log file. Optional, defaults to STDERR.
+* `BHP_BASEURL` - Base URL of Behold API, defaults to `https://feeds.behold.so/`
 
 The environment variables can be set using a standard `.env` file which should be in the same directory with the executable.
 

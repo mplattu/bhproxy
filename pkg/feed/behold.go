@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"os"
 	"time"
 )
 
@@ -24,12 +25,17 @@ func (f *Feed) getFromBehold() error {
 	return nil
 }
 
-const apiBaseUrl = "https://feeds.behold.so/"
+const defaultApiBaseUrl = "https://feeds.behold.so/"
 
 // ErrFeedNotExists indicates that feed doesn't exist even in Beholds database
 var ErrFeedNotExists = errors.New("feed not found")
 
 func fetchFeedResponse(client HTTPClient, id string) (feedResponse, error) {
+	apiBaseUrl := os.Getenv("BHP_BASEURL")
+	if apiBaseUrl == "" {
+		apiBaseUrl = defaultApiBaseUrl
+	}
+
 	url := apiBaseUrl + id
 
 	req, err := http.NewRequest(http.MethodGet, url, nil)
