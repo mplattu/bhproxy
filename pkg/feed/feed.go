@@ -124,8 +124,6 @@ func (f *Feed) populatePostImages(db *sql.DB) error {
 }
 
 func (f *Feed) insertToDB(db *sql.DB) error {
-	f.lastFetched = time.Now()
-
 	tx, err := db.Begin()
 	if err != nil {
 		return fmt.Errorf("failed to start transaction: %w", err)
@@ -139,7 +137,7 @@ func (f *Feed) insertToDB(db *sql.DB) error {
 	_, err = tx.Exec(
 		`INSERT INTO feeds 
 		(feed_id, username, biography, profile_picture_url, website, followers_count, follows_count, last_fetched) 
-		VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+		VALUES (?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)
 		ON CONFLICT(feed_id) DO UPDATE SET
 		username = excluded.username,
 		biography = excluded.biography,
@@ -149,7 +147,7 @@ func (f *Feed) insertToDB(db *sql.DB) error {
 		follows_count = excluded.follows_count,
 		last_fetched = excluded.last_fetched;`,
 		f.ID, f.Username, f.Biography, f.ProfilePictureUrl, f.Website,
-		f.FollowersCount, f.FollowsCount, f.lastFetched,
+		f.FollowersCount, f.FollowsCount,
 	)
 	if err != nil {
 		return fmt.Errorf("failed to insert feed: %w", err)
