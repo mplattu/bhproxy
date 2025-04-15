@@ -10,6 +10,7 @@ import (
 	"os"
 	"path/filepath"
 	"slices"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -76,6 +77,24 @@ func isAllowedFeedId(feedID string) bool {
 	allowedFeedIds := strings.Split(allowedFeedIdsStrWithoutSpaces, ",")
 
 	return slices.Contains(allowedFeedIds, feedID)
+}
+
+func getCacheTimeoutInSeconds() int64 {
+	cacheTimeoutStr := os.Getenv("BHP_CACHE_TIMEOUT")
+
+	if cacheTimeoutStr == "" {
+		// Defaults to 1 day
+		return 86400
+	}
+
+	cacheTimeout, err := strconv.ParseInt(cacheTimeoutStr, 0, 64)
+
+	if err != nil {
+		log.Println("BHP_CACHE_TIMEOUT is non-numeric, using default: %w", err)
+		return 86400
+	}
+
+	return cacheTimeout
 }
 
 func (f *Feed) fetchOrCreateFeed(db *sql.DB) error {
@@ -301,9 +320,12 @@ func queryFeed(db *sql.DB, id string) (*sql.Rows, error) {
         pruned_caption
     FROM feeds
     INNER JOIN posts ON feeds.feed_id = posts.feed_id
-    WHERE feeds.feed_id = ? AND last_fetched >= DATETIME('now', '-1 day');`,
-		id,
+    WHERE feeds.feed_id = ? AND last_fetched >= DATETIME('now', ?);`,
+		id, fmt.Sprintf("-%d second", getCacheTimeoutInSeconds()),
 	)
+
+	log.Printf("Cache timeout in seconds: %d\n", getCacheTimeoutInSeconds())
+
 	if err != nil {
 		return nil, fmt.Errorf("error querying feeds: %w", err)
 	}

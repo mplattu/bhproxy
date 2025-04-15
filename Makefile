@@ -19,15 +19,30 @@ build:
 build-dev:
 	@go build -o bin/bhproxy cmd/main.go
 
+.PHONY: prepare-test-data
+prepare-test-data:
+	cd test-data; ./create-test-data.bash
+
+.PHONY:testenv
+testenv: bin/.env
+	echo BHP_BASEURL=http://localhost:8080/ >>bin/.env
+	echo BHP_CACHE_TIMEOUT=1 >>bin/.env
+
 .PHONY: test
-test:
+test: testenv
+	if [ -f webroot/data/bhproxy.sqlite ]; then rm webroot/data/bhproxy.sqlite ; touch webroot/data/bhproxy.sqlite ; fi
+	@go clean -testcache
+	@go test ./cmd
 	@go test ./pkg/feed
 	@go test ./pkg/utility
 	@go test ./pkg/db
 	@go test ./pkg/handler
 
 .PHONY: test-v
-test-v:
+test-v: testenv
+	if [ -f webroot/data/bhproxy.sqlite ]; then rm webroot/data/bhproxy.sqlite ; touch webroot/data/bhproxy.sqlite ; fi
+	@go clean -testcache
+	@go test -v ./cmd
 	@go test -v ./pkg/feed
 	@go test -v ./pkg/utility
 	@go test -v ./pkg/db
