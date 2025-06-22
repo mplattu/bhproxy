@@ -320,7 +320,8 @@ func queryFeed(db *sql.DB, id string) (*sql.Rows, error) {
         pruned_caption
     FROM feeds
     INNER JOIN posts ON feeds.feed_id = posts.feed_id
-    WHERE feeds.feed_id = ? AND last_fetched >= DATETIME('now', ?);`,
+    WHERE feeds.feed_id = ? AND last_fetched >= DATETIME('now', ?)
+	ORDER BY timestamp DESC;`,
 		id, fmt.Sprintf("-%d second", getCacheTimeoutInSeconds()),
 	)
 
